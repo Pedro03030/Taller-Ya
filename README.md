@@ -1,5 +1,7 @@
 # TallerYa 🔧
 
+**Publicado en:** http://tallerya.infinityfreeapp.com
+
 Sistema web para un **taller mecánico** que resuelve el problema:
 
 > *"Los clientes me llaman todo el día para saber si el auto está listo y cuánto sale."*
@@ -13,10 +15,11 @@ El taller carga cada auto que entra como una **orden de trabajo**, arma el presu
 
 | Integrante | Responsable de |
 |---|---|
-| _Integrante 1_ | Módulo de órdenes y estados (`src/Estados.php`, `src/Ordenes.php`, pantallas del taller) |
-| _Integrante 2_ | Envío de emails por Gmail SMTP (`src/Email.php`), vista del cliente y consulta pública |
+| Devia Lautaro | Módulo de órdenes y reglas de estados — Menú B (`src/Estados.php`, `src/Ordenes.php`, `src/Presupuesto.php`, pantallas del taller en `public/taller/`) |
+| Di Prinzio Pedro | Integración externa: envío de emails por Gmail SMTP — Menú A (`src/Email.php`, `public/taller/probar_email.php`) y publicación en InfinityFree |
+| Ruesga Lautaro | Login, seguridad y validaciones (`src/app.php`, `src/Validador.php`), vista del cliente (`public/cliente/`), consulta pública (`public/seguimiento.php`) y pruebas automatizadas (`tests/`) |
 
-Los dos tienen que poder explicar todo el proyecto.
+Los tres tienen que poder explicar todo el proyecto.
 
 ## Requisitos del TP que cumple
 
@@ -24,7 +27,7 @@ Los dos tienen que poder explicar todo el proyecto.
 |---|---|
 | Persistencia en base de datos | MySQL, `database/schema.sql` |
 | Login con 2 tipos de usuario | `taller` y `cliente` (`public/login.php`, `requiereRol()` en `src/app.php`) |
-| Validación y manejo de errores | `src/Validador.php`; si la API de email no responde, el sistema sigue y deja reintentar |
+| Validación y manejo de errores | `src/Validador.php`; si Gmail no responde, el estado se guarda igual y el aviso se puede reintentar |
 | Menú A: notificaciones | Emails por el servidor SMTP de Gmail (`src/Email.php`) |
 | Menú B: reglas de negocio | Estados con transiciones, permisos por rol y alerta de órdenes demoradas (`src/Estados.php`) |
 | 5+ pruebas automatizadas | `tests/` (16 pruebas) |
@@ -49,7 +52,7 @@ tests/      pruebas automatizadas
 ## Instalación en InfinityFree
 
 ### 1. Crear la cuenta y el sitio
-1. Crear una cuenta en https://www.infinityfree.com y un sitio (por ejemplo `tallerya.free.nf`).
+1. Crear una cuenta en https://www.infinityfree.com y un sitio (el nuestro es `tallerya.infinityfreeapp.com`).
 2. En el panel, en **MySQL Databases**, crear una base (por ejemplo `tallerya`). Anotar: nombre de la base (`if0_XXXX_tallerya`), usuario (`if0_XXXX`), host (`sqlXXX.infinityfree.com`) y la contraseña de la cuenta (está en el panel, "Account Details").
 
 ### 2. Cargar la base de datos
@@ -69,7 +72,7 @@ tests/      pruebas automatizadas
 Copiar `config/config.example.php` como `config/config.php` y completar los datos de la base, el Gmail y la contraseña de aplicación. Dejar `'url_base' => '/public'`.
 
 ### 5. Subir los archivos
-Con el **File Manager** del panel o con FileZilla (los datos de FTP están en el panel), subir **todo el contenido** del proyecto dentro de la carpeta `htdocs`:
+Con el **File Manager** del panel o con WinSCP / FileZilla (protocolo **FTP**, servidor `ftpupload.net`, puerto 21; los datos están en *FTP Details*), subir **todo el contenido** del proyecto dentro de la carpeta `htdocs`:
 
 ```
 htdocs/
@@ -83,7 +86,7 @@ htdocs/
 Las carpetas `config`, `src`, `database`, `tests` y `docs` tienen un `.htaccess` que impide verlas desde el navegador.
 
 ### 6. Probar
-Entrar a `https://tu-sitio.free.nf`. Usuarios de prueba:
+Entrar a http://tallerya.infinityfreeapp.com. Usuarios de prueba:
 
 | Rol | Email | Contraseña |
 |---|---|---|
@@ -106,7 +109,7 @@ Consulta pública sin usuario: patente `AB123CD`, código `K7P2QX`.
 
 ## Pruebas automatizadas
 
-No hace falta instalar nada ni tener MySQL (usan una base SQLite en memoria y simulan la API de email):
+No hace falta instalar nada ni tener MySQL (usan una base SQLite en memoria y simulan el servidor de email):
 
 ```
 php tests/run.php
@@ -119,4 +122,3 @@ Prueban: las transiciones de estado y los permisos, la alerta de demora, la vali
 **Taller:** Panel (resumen y demorados) → Nueva orden (patente, problema y cliente) → en el detalle: diagnóstico, fecha estimada, ítems del presupuesto y botones para cambiar de estado. Al pasar a *Presupuesto listo* y a *Listo para retirar* se manda un email al cliente.
 
 **Cliente:** ingresa con su email → *Mis autos* → *Ver presupuesto* → Aprobar o Rechazar.
-

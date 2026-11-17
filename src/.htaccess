@@ -1,0 +1,7 @@
+# Esta carpeta no se puede ver desde el navegador (tiene código o claves).
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Deny from all
+</IfModule>

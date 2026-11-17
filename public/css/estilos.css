@@ -1,0 +1,163 @@
+/* TallerYa — hoja de estilos única para todo el sitio.
+   Paleta: azul oscuro (#1f3a5f) para la barra, naranja (#e8772e) para acciones. */
+
+:root {
+    --azul: #1f3a5f;
+    --azul-claro: #e8eef6;
+    --naranja: #e8772e;
+    --naranja-oscuro: #c95f1a;
+    --gris: #6b7280;
+    --borde: #d9dee5;
+    --fondo: #f4f6f9;
+    --verde: #2e8b57;
+    --rojo: #c0392b;
+    --amarillo: #d4a017;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--fondo);
+    color: #1f2933;
+    font-size: 15px;
+}
+
+a { color: var(--azul); }
+
+/* ---- Barra superior ---- */
+.barra {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: var(--azul);
+    color: #fff;
+    padding: 0 24px;
+    height: 60px;
+}
+.marca { color: #fff; text-decoration: none; font-weight: 700; font-size: 20px; }
+.barra nav { display: flex; gap: 4px; flex: 1; }
+.barra nav a {
+    color: #cfd9e6;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+}
+.barra nav a:hover { background: rgba(255,255,255,.1); color: #fff; }
+.barra nav a.activo { background: rgba(255,255,255,.18); color: #fff; font-weight: 600; }
+.usuario { display: flex; align-items: center; gap: 12px; }
+.usuario a { color: #fff; }
+
+/* ---- Contenido ---- */
+.contenido { max-width: 1100px; margin: 0 auto; padding: 24px; }
+h1 { color: var(--azul); margin: 0 0 20px; font-size: 26px; }
+h2 { color: var(--azul); font-size: 18px; margin: 0 0 12px; }
+
+.tarjeta {
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.grilla-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+.grilla-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+
+.numero { background: #fff; border: 1px solid var(--borde); border-radius: 10px; padding: 16px; }
+.numero strong { display: block; font-size: 30px; color: var(--azul); }
+.numero span { color: var(--gris); }
+.numero.alerta-borde { border-left: 5px solid var(--rojo); }
+
+/* ---- Tablas ---- */
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px; border-bottom: 1px solid var(--borde); }
+th { color: var(--gris); font-weight: 600; font-size: 13px; text-transform: uppercase; }
+tr.demorada td { background: #fff4f2; }
+td.derecha, th.derecha { text-align: right; }
+
+/* ---- Formularios ---- */
+label { display: block; font-weight: 600; margin: 12px 0 4px; }
+input, select, textarea {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    font: inherit;
+}
+textarea { min-height: 80px; }
+.fila { display: flex; gap: 12px; align-items: flex-end; }
+.fila > * { flex: 1; }
+.fila > .boton { flex: 0 0 auto; }
+
+.boton {
+    display: inline-block;
+    background: var(--naranja);
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+}
+.boton:hover { background: var(--naranja-oscuro); }
+.boton-secundario { background: var(--azul); }
+.boton-secundario:hover { background: #142a47; }
+.boton-peligro { background: var(--rojo); }
+.boton-claro { background: transparent; border: 1px solid #fff; color: #fff; }
+.boton-chico { padding: 5px 12px; font-size: 13px; }
+
+/* ---- Estados (mismo color en todo el sitio) ---- */
+.estado {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.estado-ingresado      { background: #e5e7eb; color: #374151; }
+.estado-en_diagnostico { background: #dbeafe; color: #1e40af; }
+.estado-presupuestado  { background: #fef3c7; color: #92400e; }
+.estado-aprobado       { background: #e0e7ff; color: #3730a3; }
+.estado-rechazado      { background: #fee2e2; color: #991b1b; }
+.estado-en_reparacion  { background: #ffedd5; color: #9a3412; }
+.estado-listo          { background: #dcfce7; color: #166534; }
+.estado-entregado      { background: #f3f4f6; color: #6b7280; }
+
+/* Línea de tiempo del estado (vista del cliente) */
+.pasos { display: flex; gap: 0; margin: 16px 0; }
+.paso { flex: 1; text-align: center; font-size: 12px; color: var(--gris); position: relative; padding-top: 26px; }
+.paso::before {
+    content: ""; position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+    width: 16px; height: 16px; border-radius: 50%; background: var(--borde); z-index: 1;
+}
+.paso::after {
+    content: ""; position: absolute; top: 13px; left: -50%; width: 100%; height: 3px; background: var(--borde); z-index: 0;
+}
+.paso:first-child::after { display: none; }
+.paso.hecho { color: var(--azul); font-weight: 600; }
+.paso.hecho::before, .paso.hecho::after { background: var(--naranja); }
+
+/* ---- Alertas ---- */
+.alerta { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; }
+.alerta-ok { background: #dcfce7; color: #166534; }
+.alerta-error { background: #fee2e2; color: #991b1b; }
+.alerta-aviso { background: #fef3c7; color: #92400e; }
+
+.chico { color: var(--gris); font-size: 13px; }
+.total { font-size: 22px; font-weight: 700; color: var(--azul); }
+.codigo { font-family: monospace; font-size: 18px; letter-spacing: 2px; background: var(--azul-claro); padding: 2px 8px; border-radius: 4px; }
+
+/* Login y consulta pública */
+.caja-centrada { max-width: 420px; margin: 40px auto; }
+
+.pie { text-align: center; color: var(--gris); font-size: 13px; padding: 24px; }
+
+@media (max-width: 800px) {
+    .grilla-2, .grilla-4 { grid-template-columns: 1fr; }
+    .barra { flex-wrap: wrap; height: auto; padding: 10px; }
+}

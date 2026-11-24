@@ -9,6 +9,9 @@ require __DIR__ . '/../src/Validador.php';
 require __DIR__ . '/../src/Presupuesto.php';
 require __DIR__ . '/../src/Email.php';
 require __DIR__ . '/../src/Ordenes.php';
+require __DIR__ . '/../src/Usuarios.php';
+require __DIR__ . '/../src/Paginador.php';
+require __DIR__ . '/../src/Dinero.php';
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 
 class FalloPrueba extends Exception {}

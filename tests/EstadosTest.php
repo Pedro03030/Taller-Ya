@@ -3,16 +3,16 @@
 
 function test_el_taller_puede_seguir_el_flujo_normal()
 {
-    comprobar(Estados::puedeCambiar('ingresado', 'en_diagnostico', 'taller'));
-    comprobar(Estados::puedeCambiar('en_reparacion', 'listo', 'taller'));
-    comprobar(Estados::puedeCambiar('listo', 'entregado', 'taller'));
+    comprobar(Estados::puedeCambiar('ingresado', 'en_diagnostico', 'empleado'));
+    comprobar(Estados::puedeCambiar('en_reparacion', 'listo', 'empleado'));
+    comprobar(Estados::puedeCambiar('listo', 'entregado', 'empleado'));
 }
 
 function test_no_se_puede_saltear_estados()
 {
-    comprobar(!Estados::puedeCambiar('ingresado', 'listo', 'taller'), 'No debería pasar de ingresado a listo');
-    comprobar(!Estados::puedeCambiar('presupuestado', 'en_reparacion', 'taller'), 'No se repara sin aprobación');
-    comprobar(!Estados::puedeCambiar('entregado', 'ingresado', 'taller'), 'Una orden entregada está cerrada');
+    comprobar(!Estados::puedeCambiar('ingresado', 'listo', 'empleado'), 'No debería pasar de ingresado a listo');
+    comprobar(!Estados::puedeCambiar('presupuestado', 'en_reparacion', 'empleado'), 'No se repara sin aprobación');
+    comprobar(!Estados::puedeCambiar('entregado', 'ingresado', 'empleado'), 'Una orden entregada está cerrada');
 }
 
 function test_el_cliente_solo_puede_aprobar_o_rechazar()
@@ -24,8 +24,8 @@ function test_el_cliente_solo_puede_aprobar_o_rechazar()
 
 function test_no_se_presupuesta_sin_items()
 {
-    comprobar(!Estados::puedeCambiar('en_diagnostico', 'presupuestado', 'taller', 0));
-    comprobar(Estados::puedeCambiar('en_diagnostico', 'presupuestado', 'taller', 2));
+    comprobar(!Estados::puedeCambiar('en_diagnostico', 'presupuestado', 'empleado', 0));
+    comprobar(Estados::puedeCambiar('en_diagnostico', 'presupuestado', 'empleado', 2));
 }
 
 function test_alerta_de_orden_demorada()
@@ -44,4 +44,23 @@ function test_se_avisa_al_cliente_solo_en_presupuesto_y_listo()
     $texto = Estados::mensajeParaCliente('presupuestado', 'AB123CD', 75000, 'K7P2QX');
     comprobar(str_contains($texto, '$75.000'), 'El email tiene que decir cuánto sale');
     comprobar(str_contains($texto, 'K7P2QX'), 'El email tiene que incluir el código de seguimiento');
+}
+
+function test_admin_y_empleado_pueden_cambiar_estados_y_el_cliente_no()
+{
+    comprobar(Estados::puedeCambiar('ingresado', 'en_diagnostico', 'admin'));
+    comprobar(Estados::puedeCambiar('ingresado', 'en_diagnostico', 'empleado'));
+    comprobar(!Estados::puedeCambiar('ingresado', 'en_diagnostico', 'cliente'));
+    comprobar(!Estados::puedeCambiar('ingresado', 'en_diagnostico', 'taller'), 'El rol viejo "taller" ya no existe');
+}
+
+function test_el_presupuesto_se_puede_cambiar_hasta_que_el_auto_esta_listo()
+{
+    comprobar(Estados::presupuestoModificable('en_diagnostico'));
+    comprobar(Estados::presupuestoModificable('aprobado'));
+    comprobar(Estados::presupuestoModificable('en_reparacion'));
+    comprobar(!Estados::presupuestoModificable('listo'));
+    comprobar(!Estados::presupuestoModificable('entregado'));
+    comprobar(!Estados::presupuestoEnviado('en_diagnostico'), 'En diagnóstico todavía es un borrador');
+    comprobar(Estados::presupuestoEnviado('aprobado'));
 }

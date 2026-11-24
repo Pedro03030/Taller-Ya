@@ -56,8 +56,8 @@ class Estados
     /**
      * ¿Puede este rol pasar la orden de $desde a $hacia?
      * - El cliente solo puede aprobar o rechazar un presupuesto.
-     * - El taller puede hacer cualquier transición válida (por ejemplo, si el
-     *   cliente aprueba por teléfono).
+     * - El personal del taller (admin o empleado) puede hacer cualquier
+     *   transición válida (por ejemplo, si el cliente aprueba por teléfono).
      * - Para presupuestar, la orden tiene que tener al menos un ítem.
      */
     public static function puedeCambiar(string $desde, string $hacia, string $rol, int $cantidadItems = 1): bool
@@ -71,7 +71,25 @@ class Estados
         if ($rol === 'cliente') {
             return $desde === 'presupuestado' && in_array($hacia, ['aprobado', 'rechazado'], true);
         }
-        return $rol === 'taller';
+        return in_array($rol, ['admin', 'empleado'], true);
+    }
+
+    /**
+     * ¿Se puede cambiar el presupuesto en este estado?
+     * Sí, hasta que el auto está listo para retirar. Después ya no.
+     */
+    public static function presupuestoModificable(string $estado): bool
+    {
+        return self::existe($estado) && !in_array($estado, ['listo', 'entregado'], true);
+    }
+
+    /**
+     * ¿El presupuesto ya se le mandó al cliente?
+     * Si es así, cambiarlo exige identificar al empleado y el cliente lo tiene que volver a aprobar.
+     */
+    public static function presupuestoEnviado(string $estado): bool
+    {
+        return in_array($estado, ['presupuestado', 'aprobado', 'rechazado', 'en_reparacion'], true);
     }
 
     public static function hayQueAvisar(string $estado): bool
@@ -82,6 +100,8 @@ class Estados
     public static function asuntoParaCliente(string $estado, string $patente): string
     {
         switch ($estado) {
+            case 'presupuesto_modificado':
+                return "Se modificó el presupuesto de tu auto $patente";
             case 'presupuestado':
                 return "Presupuesto listo para tu auto $patente";
             case 'listo':
@@ -94,6 +114,10 @@ class Estados
     public static function mensajeParaCliente(string $estado, string $patente, float $total = 0, string $codigo = ''): string
     {
         switch ($estado) {
+            case 'presupuesto_modificado':
+                $texto = "Hola. El taller modificó el presupuesto de tu auto $patente. El nuevo total es $" . number_format($total, 0, ',', '.')
+                    . ".\nIngresá a TallerYa con tu usuario para aprobarlo o rechazarlo de nuevo. No seguimos trabajando sin tu aprobación.";
+                break;
             case 'presupuestado':
                 $texto = "Hola. El presupuesto de tu auto $patente está listo: $" . number_format($total, 0, ',', '.')
                     . ".\nIngresá a TallerYa con tu usuario para aprobarlo o rechazarlo. No empezamos a trabajar sin tu aprobación.";

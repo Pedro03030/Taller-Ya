@@ -8,6 +8,9 @@ require_once __DIR__ . '/Validador.php';
 require_once __DIR__ . '/Presupuesto.php';
 require_once __DIR__ . '/Email.php';
 require_once __DIR__ . '/Ordenes.php';
+require_once __DIR__ . '/Usuarios.php';
+require_once __DIR__ . '/Paginador.php';
+require_once __DIR__ . '/Dinero.php';
 
 $rutaConfig = __DIR__ . '/../config/config.php';
 if (!file_exists($rutaConfig)) {
@@ -56,25 +59,70 @@ function ordenes(): Ordenes
     return new Ordenes(db(), email());
 }
 
+function usuarios(): Usuarios
+{
+    return new Usuarios(db());
+}
+
+/** Anota en el historial de empleados lo que hizo una persona del taller. */
+function registrarAccion(int $usuarioId, string $accion, ?string $detalle = null, ?int $ordenId = null): void
+{
+    ordenes()->registrarAccion($usuarioId, $accion, $detalle, $ordenId);
+}
+
 /* ---------- Sesión y permisos ---------- */
 
+/**
+ * Usuario con sesión iniciada. En cada página se vuelve a leer de la base:
+ * si el admin le cambió el rol o lo dio de baja, se aplica en el momento.
+ */
 function usuarioActual(): ?array
 {
+    static $cargado = false;
+    if (!$cargado && isset($_SESSION['usuario']['id'])) {
+        $cargado = true;
+        $u = usuarios()->buscar((int)$_SESSION['usuario']['id']);
+        if (!$u || !(int)$u['activo']) {
+            unset($_SESSION['usuario']);
+        } else {
+            $_SESSION['usuario'] = ['id' => (int)$u['id'], 'nombre' => $u['nombre'], 'rol' => $u['rol']];
+        }
+    }
     return $_SESSION['usuario'] ?? null;
 }
 
-/** Corta la página si no hay sesión o el rol no corresponde. */
-function requiereRol(string $rol): array
+/**
+ * Corta la página si no hay sesión o el rol no corresponde.
+ * $roles puede ser uno ('cliente') o varios (['admin', 'empleado']).
+ */
+function requiereRol($roles): array
 {
     $u = usuarioActual();
     if (!$u) {
         redirigir('/login.php');
     }
-    if ($u['rol'] !== $rol) {
+    if (!in_array($u['rol'], (array)$roles, true)) {
         http_response_code(403);
         die('No tenés permiso para ver esta página.');
     }
     return $u;
+}
+
+/** Páginas del taller: las ven el admin y los empleados. */
+function requierePersonal(): array
+{
+    return requiereRol(Usuarios::ROLES_PERSONAL);
+}
+
+/** Páginas solo del dueño (dinero, alta de empleados). */
+function requiereAdmin(): array
+{
+    return requiereRol('admin');
+}
+
+function esAdmin(): bool
+{
+    return (usuarioActual()['rol'] ?? '') === 'admin';
 }
 
 /** Arma una URL interna teniendo en cuenta dónde está instalado el sitio. */

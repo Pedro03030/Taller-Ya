@@ -6,4 +6,4 @@ $u = usuarioActual();
 if (!$u) {
     redirigir('/login.php');
 }
-redirigir($u['rol'] === 'taller' ? '/taller/panel.php' : '/cliente/inicio.php');
+redirigir(Usuarios::esPersonal($u['rol']) ? '/taller/panel.php' : '/cliente/inicio.php');

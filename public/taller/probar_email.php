@@ -5,7 +5,7 @@
  * la configuración en el hosting y para la demo en clase.
  */
 require __DIR__ . '/../../src/app.php';
-requiereRol('taller');
+requierePersonal();
 
 $para = '';
 $resultado = null;

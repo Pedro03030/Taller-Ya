@@ -28,9 +28,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $items = $servicio->items($id);
+$cambios = $servicio->cambiosPresupuesto($id);
 encabezado('Mi auto ' . $orden['patente'], 'inicio');
-include __DIR__ . '/../../src/vista_estado_cliente.php';
 ?>
+<?php if ($cambios && $orden['estado'] === 'presupuestado'): ?>
+<div class="alerta alerta-aviso">
+    El taller modificó el presupuesto el <?= fecha($cambios[0]['fecha'], true) ?>:
+    antes <?= Presupuesto::formatear($cambios[0]['total_anterior']) ?>, ahora <strong><?= Presupuesto::formatear($cambios[0]['total_nuevo']) ?></strong>.
+    Motivo: <?= e($cambios[0]['motivo']) ?>. Revisalo y aprobalo de nuevo.
+</div>
+<?php endif; ?>
+<?php include __DIR__ . '/../../src/vista_estado_cliente.php'; ?>
 <?php if ($orden['estado'] === 'presupuestado'): ?>
 <div class="tarjeta">
     <h2>¿Aprobás el presupuesto?</h2>

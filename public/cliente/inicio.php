@@ -6,26 +6,34 @@ $usuario = requiereRol('cliente');
 $st = db()->prepare(
     'SELECT o.*, v.patente, v.marca, v.modelo FROM ordenes o
      JOIN vehiculos v ON v.id = o.vehiculo_id
-     WHERE v.cliente_id = ? ORDER BY o.fecha_ingreso DESC'
+     WHERE v.cliente_id = ? ORDER BY o.fecha_ingreso DESC, o.id DESC'
 );
 $st->execute([$usuario['id']]);
 $ordenes = $st->fetchAll();
 $activas = array_filter($ordenes, fn($o) => $o['estado'] !== 'entregado');
 $anteriores = array_filter($ordenes, fn($o) => $o['estado'] === 'entregado');
 
+// Cada tabla tiene su propia paginación.
+$pagActivas = new Paginador(count($activas), 10, 'pag_activas');
+$pagAnteriores = new Paginador(count($anteriores), 10, 'pag_anteriores', null, 'anteriores');
+
 encabezado('Mis autos', 'inicio');
 ?>
 <p class="chico">Te mandamos un email cuando el presupuesto esté listo y cuando puedas retirar el auto.</p>
 
 <div class="tarjeta">
-    <h2>En el taller</h2>
+    <div class="titulo-con-boton">
+        <h2>En el taller</h2>
+        <a class="boton boton-chico" href="<?= url('/cliente/orden_nueva.php') ?>">+ Pedir una orden nueva</a>
+    </div>
     <?php if (!$activas): ?>
         <p class="chico">No tenés autos en el taller ahora.</p>
-    <?php endif; ?>
+    <?php else: ?>
     <table>
-        <?php foreach ($activas as $o): ?>
+        <tr><th>Vehículo</th><th>Problema</th><th>Estado</th><th></th></tr>
+        <?php foreach ($pagActivas->recortar($activas) as $o): ?>
             <tr>
-                <td><strong><?= e($o['patente']) ?></strong><br><span class="chico"><?= e($o['marca'] . ' ' . $o['modelo']) ?></span></td>
+                <td><strong><?= e($o['patente']) ?></strong><br><span class="chico"><?= e($o['marca'] . ' ' . $o['modelo']) ?> · orden #<?= $o['id'] ?></span></td>
                 <td><?= e($o['problema']) ?></td>
                 <td><?= etiquetaEstado($o['estado']) ?></td>
                 <td>
@@ -36,14 +44,16 @@ encabezado('Mis autos', 'inicio');
             </tr>
         <?php endforeach; ?>
     </table>
+    <?= $pagActivas->links() ?>
+    <?php endif; ?>
 </div>
 
 <?php if ($anteriores): ?>
-<div class="tarjeta">
+<div class="tarjeta" id="anteriores">
     <h2>Reparaciones anteriores</h2>
     <table>
         <tr><th>Vehículo</th><th>Trabajo</th><th>Entregado</th><th></th></tr>
-        <?php foreach ($anteriores as $o): ?>
+        <?php foreach ($pagAnteriores->recortar($anteriores) as $o): ?>
             <tr>
                 <td><?= e($o['patente']) ?></td>
                 <td><?= e($o['problema']) ?></td>
@@ -52,6 +62,7 @@ encabezado('Mis autos', 'inicio');
             </tr>
         <?php endforeach; ?>
     </table>
+    <?= $pagAnteriores->links() ?>
 </div>
 <?php endif; ?>
 <?php pie(); ?>

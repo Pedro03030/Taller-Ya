@@ -161,3 +161,82 @@ textarea { min-height: 80px; }
     .grilla-2, .grilla-4 { grid-template-columns: 1fr; }
     .barra { flex-wrap: wrap; height: auto; padding: 10px; }
 }
+
+/* Cuentas de prueba en el login */
+.cuenta-demo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid var(--borde);
+}
+
+/* ---- Paginación (todas las tablas) ---- */
+.paginacion {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--borde);
+}
+.paginacion nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.paginacion a, .paginacion .actual, .paginacion .puntos {
+    min-width: 34px; padding: 5px 10px; border-radius: 6px; text-align: center; font-size: 14px; text-decoration: none;
+}
+.paginacion a { border: 1px solid var(--borde); background: #fff; }
+.paginacion a:hover { background: var(--azul-claro); }
+.paginacion .actual { background: var(--azul); color: #fff; font-weight: 600; }
+.paginacion .puntos { color: var(--gris); }
+
+/* Rol al lado del nombre en la barra */
+.rol { font-size: 11px; background: rgba(255,255,255,.18); padding: 2px 8px; border-radius: 10px; margin-left: 4px; }
+
+/* ---- Filtrador de patentes (Nueva orden) ---- */
+.resultados-patente {
+    border: 1px solid var(--borde); border-radius: 8px; margin: -4px 0 10px; overflow: hidden; background: #fff;
+}
+.resultados-patente button {
+    display: flex; align-items: center; gap: 6px; width: 100%; text-align: left; border: 0;
+    border-bottom: 1px solid var(--borde); background: #fff; padding: 9px 12px; cursor: pointer; font: inherit;
+}
+.resultados-patente button:last-child { border-bottom: 0; }
+.resultados-patente button:hover { background: var(--azul-claro); }
+.resultados-patente button .estado { margin-left: auto; }
+.resultados-patente.vacio { padding: 9px 12px; color: var(--gris); font-size: 13px; }
+
+/* ---- Dinero ---- */
+.numero-pendiente { border-style: dashed; }
+.pestanas { display: flex; gap: 4px; margin-top: 20px; }
+.pestanas a {
+    padding: 9px 18px; border: 1px solid var(--borde); border-bottom: 0; border-radius: 8px 8px 0 0;
+    background: var(--azul-claro); text-decoration: none; font-weight: 600;
+}
+.pestanas a.activo { background: #fff; color: var(--naranja-oscuro); }
+.pestana-contenido { border-top-left-radius: 0; }
+
+/* ---- Modificar presupuesto ---- */
+.modificar { margin-top: 12px; }
+.modificar summary { display: inline-block; list-style: none; cursor: pointer; }
+.modificar summary::-webkit-details-marker { display: none; }
+.modificar[open] summary { margin-bottom: 12px; }
+.tabla-edicion input, .tabla-edicion select { margin: 0; }
+.tabla-edicion td { padding: 4px; }
+.corto { max-width: 110px; }
+.centro { text-align: center; }
+.verificacion {
+    background: var(--azul-claro); border-left: 4px solid var(--azul); border-radius: 6px; padding: 12px 14px; margin: 12px 0;
+}
+.cambio { border-bottom: 1px solid var(--borde); padding-bottom: 8px; margin-bottom: 8px; }
+.boton-claro-oscuro { background: #fff; color: var(--azul); border: 1px solid var(--azul); }
+
+/* ---- Varios ---- */
+tr.inactivo td { color: var(--gris); }
+.titulo-con-boton { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.titulo-con-boton h2 { margin: 0; }
+.caja-media { max-width: 720px; }
+.opcion { display: block; font-weight: normal; padding: 8px 0; cursor: pointer; }
+.opcion input { width: auto; margin-right: 6px; }
+.check label { display: flex; align-items: center; gap: 6px; font-weight: normal; margin-bottom: 10px; }
+.check input { width: auto; margin: 0; }
+.cambio:last-of-type { border-bottom: 0; margin-bottom: 0; }
+.pestana-contenido h2 { margin-top: 16px; }
+.tabla-edicion select { min-width: 140px; }
+.boton-claro-oscuro:hover { background: var(--azul-claro); }
